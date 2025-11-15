@@ -16,10 +16,10 @@ const alignClasses: Record<string, string> = {
   right: 'text-right',
 };
 
-const HeadingTag = React.forwardRef<HTMLHeadingElement, { level: number; children: React.ReactNode } & any>(
+const HeadingTag = React.forwardRef<HTMLHeadingElement, { level: 1 | 2 | 3 | 4 | 5 | 6; children: React.ReactNode } & React.HTMLAttributes<HTMLHeadingElement>>(
   ({ level, children, ...props }, ref) => {
-    const Tag = `h${level}` as keyof JSX.IntrinsicElements;
-    return <Tag ref={ref} {...props}>{children}</Tag>;
+    const Tag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+    return React.createElement(Tag, { ref, ...props }, children);
   }
 );
 

@@ -1,6 +1,6 @@
 import type { Size } from '../../types';
 
-export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+export interface TextareaProps extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'size'> {
   /**
    * Size of the textarea
    */

@@ -1,7 +1,7 @@
 import type { IconName } from '../../icons/icon.types';
 import type { Color, Variant, Size, IconSize, Style, Action } from '../../types';
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'style'> {
   /**
    * Configure the button as a submit button for the nearest form.
    */
