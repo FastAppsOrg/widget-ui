@@ -1,0 +1,15 @@
+src/
+examples/
+*.config.ts
+*.config.js
+tsconfig.json
+tsconfig.build.json
+.gitignore
+.eslintrc*
+.prettierrc*
+*.md
+!README.md
+node_modules/
+*.log
+.DS_Store
+
