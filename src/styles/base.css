@@ -2,3 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  * {
+    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  }
+}
+

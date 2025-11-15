@@ -4,6 +4,15 @@ const config: Config = {
   content: [],
   theme: {
     extend: {
+      // Font family
+      fontFamily: {
+        sans: [
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'system-ui',
+          'sans-serif',
+        ],
+      },
       // Color tokens
       colors: {
         primary: {

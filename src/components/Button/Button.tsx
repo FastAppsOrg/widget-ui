@@ -15,46 +15,58 @@ const sizeClasses: Record<string, string> = {
   '3xl': 'h-[48px] px-8 text-xl',
 };
 
+// Color definitions
+const buttonColors = {
+  info: { base: '#0385ff', hover: '#006acb' },
+  primary: { base: '#181818', hover: '#303030' },
+  secondary: { base: '#5d5d5d', hover: '#414141' },
+  discovery: { base: '#914ff7', hover: '#8046da' },
+  success: { base: '#01a241', hover: '#01a241' },
+  caution: { base: '#ba8e01', hover: '#906f00' },
+  warning: { base: '#e25605', hover: '#b8490d' },
+  danger: { base: '#df2e2a', hover: '#b92723' },
+} as const;
+
 const variantClasses: Record<string, Record<string, string>> = {
   solid: {
-    primary: 'bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800 disabled:bg-primary-300',
-    secondary: 'bg-secondary-600 text-white hover:bg-secondary-700 active:bg-secondary-800 disabled:bg-secondary-300',
-    info: 'bg-info-600 text-white hover:bg-info-700 active:bg-info-800 disabled:bg-info-300',
-    success: 'bg-success-600 text-white hover:bg-success-700 active:bg-success-800 disabled:bg-success-300',
-    caution: 'bg-caution-600 text-white hover:bg-caution-700 active:bg-caution-800 disabled:bg-caution-300',
-    warning: 'bg-warning-600 text-white hover:bg-warning-700 active:bg-warning-800 disabled:bg-warning-300',
-    danger: 'bg-danger-600 text-white hover:bg-danger-700 active:bg-danger-800 disabled:bg-danger-300',
-    discovery: 'bg-discovery-600 text-white hover:bg-discovery-700 active:bg-discovery-800 disabled:bg-discovery-300',
+    info: 'text-white disabled:opacity-50 disabled:cursor-not-allowed',
+    primary: 'text-white disabled:opacity-50 disabled:cursor-not-allowed',
+    secondary: 'text-white disabled:opacity-50 disabled:cursor-not-allowed',
+    discovery: 'text-white disabled:opacity-50 disabled:cursor-not-allowed',
+    success: 'text-white disabled:opacity-50 disabled:cursor-not-allowed',
+    caution: 'text-white disabled:opacity-50 disabled:cursor-not-allowed',
+    warning: 'text-white disabled:opacity-50 disabled:cursor-not-allowed',
+    danger: 'text-white disabled:opacity-50 disabled:cursor-not-allowed',
   },
   soft: {
-    primary: 'bg-primary-100 text-primary-700 hover:bg-primary-200 active:bg-primary-300 disabled:bg-primary-50 disabled:text-primary-300',
-    secondary: 'bg-secondary-100 text-secondary-700 hover:bg-secondary-200 active:bg-secondary-300 disabled:bg-secondary-50 disabled:text-secondary-300',
-    info: 'bg-info-100 text-info-700 hover:bg-info-200 active:bg-info-300 disabled:bg-info-50 disabled:text-info-300',
-    success: 'bg-success-100 text-success-700 hover:bg-success-200 active:bg-success-300 disabled:bg-success-50 disabled:text-success-300',
-    caution: 'bg-caution-100 text-caution-700 hover:bg-caution-200 active:bg-caution-300 disabled:bg-caution-50 disabled:text-caution-300',
-    warning: 'bg-warning-100 text-warning-700 hover:bg-warning-200 active:bg-warning-300 disabled:bg-warning-50 disabled:text-warning-300',
-    danger: 'bg-danger-100 text-danger-700 hover:bg-danger-200 active:bg-danger-300 disabled:bg-danger-50 disabled:text-danger-300',
-    discovery: 'bg-discovery-100 text-discovery-700 hover:bg-discovery-200 active:bg-discovery-300 disabled:bg-discovery-50 disabled:text-discovery-300',
+    info: 'disabled:opacity-50 disabled:cursor-not-allowed',
+    primary: 'disabled:opacity-50 disabled:cursor-not-allowed',
+    secondary: 'disabled:opacity-50 disabled:cursor-not-allowed',
+    discovery: 'disabled:opacity-50 disabled:cursor-not-allowed',
+    success: 'disabled:opacity-50 disabled:cursor-not-allowed',
+    caution: 'disabled:opacity-50 disabled:cursor-not-allowed',
+    warning: 'disabled:opacity-50 disabled:cursor-not-allowed',
+    danger: 'disabled:opacity-50 disabled:cursor-not-allowed',
   },
   outline: {
-    primary: 'border-2 border-primary-600 text-primary-600 hover:bg-primary-50 active:bg-primary-100 disabled:border-primary-300 disabled:text-primary-300',
-    secondary: 'border-2 border-secondary-600 text-secondary-600 hover:bg-secondary-50 active:bg-secondary-100 disabled:border-secondary-300 disabled:text-secondary-300',
-    info: 'border-2 border-info-600 text-info-600 hover:bg-info-50 active:bg-info-100 disabled:border-info-300 disabled:text-info-300',
-    success: 'border-2 border-success-600 text-success-600 hover:bg-success-50 active:bg-success-100 disabled:border-success-300 disabled:text-success-300',
-    caution: 'border-2 border-caution-600 text-caution-600 hover:bg-caution-50 active:bg-caution-100 disabled:border-caution-300 disabled:text-caution-300',
-    warning: 'border-2 border-warning-600 text-warning-600 hover:bg-warning-50 active:bg-warning-100 disabled:border-warning-300 disabled:text-warning-300',
-    danger: 'border-2 border-danger-600 text-danger-600 hover:bg-danger-50 active:bg-danger-100 disabled:border-danger-300 disabled:text-danger-300',
-    discovery: 'border-2 border-discovery-600 text-discovery-600 hover:bg-discovery-50 active:bg-discovery-100 disabled:border-discovery-300 disabled:text-discovery-300',
+    info: 'border-2 bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
+    primary: 'border-2 bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
+    secondary: 'border-2 bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
+    discovery: 'border-2 bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
+    success: 'border-2 bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
+    caution: 'border-2 bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
+    warning: 'border-2 bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
+    danger: 'border-2 bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
   },
   ghost: {
-    primary: 'text-primary-600 hover:bg-primary-50 active:bg-primary-100 disabled:text-primary-300',
-    secondary: 'text-secondary-600 hover:bg-secondary-50 active:bg-secondary-100 disabled:text-secondary-300',
-    info: 'text-info-600 hover:bg-info-50 active:bg-info-100 disabled:text-info-300',
-    success: 'text-success-600 hover:bg-success-50 active:bg-success-100 disabled:text-success-300',
-    caution: 'text-caution-600 hover:bg-caution-50 active:bg-caution-100 disabled:text-caution-300',
-    warning: 'text-warning-600 hover:bg-warning-50 active:bg-warning-100 disabled:text-warning-300',
-    danger: 'text-danger-600 hover:bg-danger-50 active:bg-danger-100 disabled:text-danger-300',
-    discovery: 'text-discovery-600 hover:bg-discovery-50 active:bg-discovery-100 disabled:text-discovery-300',
+    info: 'bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
+    primary: 'bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
+    secondary: 'bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
+    discovery: 'bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
+    success: 'bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
+    caution: 'bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
+    warning: 'bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
+    danger: 'bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
   },
 };
 
@@ -87,6 +99,70 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     // Determine actual variant based on style prop
     const actualVariant = style ? (style === 'primary' ? 'solid' : 'outline') : variant;
 
+    const colorConfig = buttonColors[actualColor as keyof typeof buttonColors];
+    const baseColor = colorConfig.base;
+    const hoverColor = colorConfig.hover;
+
+    // Helper function to convert hex to rgb
+    function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result
+        ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16),
+          }
+        : null;
+    }
+
+    // Generate dynamic styles based on variant
+    const getVariantStyles = () => {
+      switch (actualVariant) {
+        case 'solid':
+          return {
+            backgroundColor: baseColor,
+            color: '#ffffff',
+          } as React.CSSProperties;
+        case 'soft': {
+          // Convert hex to rgba with 10% opacity for soft variant
+          const rgb = hexToRgb(baseColor);
+          return {
+            backgroundColor: rgb ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.1)` : baseColor,
+            color: baseColor,
+          } as React.CSSProperties;
+        }
+        case 'outline':
+          return {
+            borderColor: baseColor,
+            color: baseColor,
+            backgroundColor: 'transparent',
+          } as React.CSSProperties;
+        case 'ghost':
+          return {
+            color: baseColor,
+            backgroundColor: 'transparent',
+          } as React.CSSProperties;
+        default:
+          return {};
+      }
+    };
+
+    // Get hover background color for soft/outline/ghost variants
+    const getHoverBackgroundColor = () => {
+      if (actualVariant === 'solid') {
+        return hoverColor;
+      }
+      const rgb = hexToRgb(baseColor);
+      if (rgb) {
+        const opacity = actualVariant === 'soft' ? 0.2 : 0.1;
+        return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${opacity})`;
+      }
+      return baseColor;
+    };
+
+    const variantStyles = getVariantStyles();
+    const hoverBgColor = getHoverBackgroundColor();
+
     const baseClasses = 'inline-flex items-center justify-center font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed';
     
     const sizeClass = sizeClasses[size] || sizeClasses.lg;
@@ -95,6 +171,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const uniformClass = uniform ? 'aspect-square' : '';
     const blockClass = block ? 'w-full' : '';
     const disabledClass = disabled ? 'opacity-50 cursor-not-allowed' : '';
+
+    // Add hover styles using state
+    const [isHovered, setIsHovered] = React.useState(false);
+    
+    const hoverStyles: React.CSSProperties = disabled || !isHovered 
+      ? {} 
+      : { backgroundColor: hoverBgColor };
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (disabled) {
@@ -118,6 +201,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         type={submit ? 'submit' : 'button'}
         disabled={disabled}
         onClick={handleClick}
+        onMouseEnter={() => !disabled && setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        style={{ ...variantStyles, ...hoverStyles }}
         className={cn(
           baseClasses,
           sizeClass,
