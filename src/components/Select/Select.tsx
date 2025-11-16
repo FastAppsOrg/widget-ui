@@ -1,6 +1,7 @@
 import React from 'react';
 import type { SelectProps } from './Select.types';
 import { cn } from '../../utils';
+import { Icon } from '../../icons';
 
 const sizeSpec: Record<string, { fontPx: number; heightPx: number; paddingXClass: string; rightSvg: { w: number; h: number }; arrowRightPx: number; arrowTopPx: number }> = {
   '3xs': { fontPx: 12, heightPx: 22, paddingXClass: 'px-1.5', rightSvg: { w: 6, h: 9 }, arrowRightPx: 6, arrowTopPx: 9 },
@@ -35,8 +36,13 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     ref
   ) => {
     const spec = sizeSpec[size] || sizeSpec['md'];
+    const modalSpec = sizeSpec['md'];
     const selectId = id || `select-${Math.random().toString(36).substr(2, 9)}`;
     const [value, setValue] = React.useState<string>(defaultValue ?? '');
+    const [open, setOpen] = React.useState(false);
+    const [shouldRenderDropdown, setShouldRenderDropdown] = React.useState(false);
+    const [dropdownAnim, setDropdownAnim] = React.useState<'enter' | 'exit'>('exit');
+    const containerRef = React.useRef<HTMLDivElement | null>(null);
     const hasValue = value !== '';
     const textColor = hasValue ? '#0E0E0E' : '#8F8F8F';
 
@@ -86,14 +92,6 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
 
     const disabledStyles = disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer';
 
-    const onChangeInternal = (e: React.ChangeEvent<HTMLSelectElement>) => {
-      const next = e.target.value;
-      setValue(next);
-      if (onChangeAction) {
-        console.log('Action dispatched:', onChangeAction);
-      }
-    };
-
     const clearValue = (e: React.MouseEvent) => {
       e.stopPropagation();
       setValue('');
@@ -102,16 +100,72 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       }
     };
 
+    // Outside click / ESC close
+    React.useEffect(() => {
+      if (!open) return;
+      const handlePointer = (e: MouseEvent | TouchEvent) => {
+        const root = containerRef.current;
+        if (!root) return;
+        const target = e.target as Node | null;
+        if (target && root.contains(target)) return;
+        setOpen(false);
+      };
+      const handleKey = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') setOpen(false);
+      };
+      document.addEventListener('mousedown', handlePointer);
+      document.addEventListener('touchstart', handlePointer, { passive: true });
+      document.addEventListener('keydown', handleKey);
+      return () => {
+        document.removeEventListener('mousedown', handlePointer);
+        document.removeEventListener('touchstart', handlePointer);
+        document.removeEventListener('keydown', handleKey);
+      };
+    }, [open]);
+
+    // Animate dropdown mount/unmount like DatePicker
+    React.useEffect(() => {
+      if (open) {
+        setShouldRenderDropdown(true);
+        const id = requestAnimationFrame(() => setDropdownAnim('enter'));
+        return () => cancelAnimationFrame(id);
+      }
+      setDropdownAnim('exit');
+      const t = setTimeout(() => setShouldRenderDropdown(false), 110);
+      return () => clearTimeout(t);
+    }, [open]);
+
+    const selectedLabel = React.useMemo(() => {
+      const hit = options.find((o) => String(o.value) === String(value));
+      return hit?.label ?? '';
+    }, [options, value]);
+
     return (
-      <div className={cn('relative inline-block', widthClass)}>
-        {/* Native select, styled to match DatePicker */}
+      <div ref={containerRef} className={cn('relative inline-block', widthClass)}>
+        {/* Native select visual preserved; intercept native menu */}
         <select
           ref={ref}
           id={selectId}
           name={name}
           disabled={disabled}
           value={value}
-          onChange={onChangeInternal}
+          onChange={(e) => {
+            const next = e.target.value;
+            setValue(next);
+            if (onChangeAction) {
+              console.log('Action dispatched:', onChangeAction);
+            }
+          }}
+          onMouseDown={(e) => {
+            e.preventDefault();
+            if (!disabled) setOpen((o) => !o);
+          }}
+          onKeyDown={(e) => {
+            if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
+              e.preventDefault();
+              setOpen((o) => !o);
+            }
+          }}
           className={cn(
             'appearance-none w-full transition-colors duration-300',
             spec.paddingXClass,
@@ -122,7 +176,6 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             className
           )}
           style={{ height: spec.heightPx, fontSize: spec.fontPx, color: textColor, paddingRight: 28 }}
-          {...props}
         >
           {placeholder && <option value="">{placeholder}</option>}
           {options.map((option) => (
@@ -164,6 +217,70 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             />
           </svg>
         </span>
+
+        {/* Dropdown modal - match DatePicker popover */}
+        {shouldRenderDropdown && (
+          <div className={cn('absolute z-50 top-full mt-2 left-0 min-w-full')}>
+            <div
+              className={cn(
+                'bg-white rounded-xl shadow-lg border-[0.5px] border-[#D6D6D6]',
+                dropdownAnim === 'enter' ? 'datepicker-pop-enter' : 'datepicker-pop-exit'
+              )}
+              style={{ willChange: 'opacity, transform', width: 300, padding: 6 }}
+            >
+              {/* Keyframes copied from DatePicker for consistency */}
+              <style>
+                {`
+                  @keyframes dpEnter {
+                    0% { opacity: 0; transform: translateY(-4px) scale(0.96); }
+                    100% { opacity: 1; transform: translateY(0) scale(1); }
+                  }
+                  @keyframes dpExit {
+                    0% { opacity: 1; transform: translateY(0) scale(1); }
+                    100% { opacity: 0; transform: translateY(-4px) scale(0.96); }
+                  }
+                  .datepicker-pop-enter { animation: dpEnter 120ms ease-out forwards; }
+                  .datepicker-pop-exit { animation: dpExit 100ms ease-in forwards; }
+                `}
+              </style>
+              <ul className="max-h-60 overflow-auto">
+                {options.map((opt) => {
+                  const selected = String(opt.value) === String(value);
+                  return (
+                    <li key={String(opt.value)}>
+                      <button
+                        type="button"
+                        disabled={!!opt.disabled}
+                        onClick={() => {
+                          setValue(String(opt.value));
+                          setOpen(false);
+                          if (onChangeAction) {
+                            console.log('Action dispatched:', onChangeAction);
+                          }
+                        }}
+                        className={cn(
+                          'w-full text-left px-1.5 pt-[7px] pb-[3px] rounded-md',
+                          opt.disabled ? 'text-gray-300 cursor-not-allowed' : 'cursor-pointer hover:bg-[#EBEBEB] hover:text-[#282828]',
+                          selected ? 'text-[#0E0E0E] hover:text-[#282828]' : 'text-[#282828]'
+                        )}
+                        style={{ fontSize: modalSpec.fontPx }}
+                      >
+                        <span className="inline-flex items-center gap-2">
+                          <span style={{ width: 16, height: 16 }} className="inline-flex items-center justify-center pl-1">
+                            {selected ? (
+                              <Icon name="check" strokeWidth={2.5} style={{ width: 16, height: 16, color: '#0E0E0E' }} />
+                            ) : null}
+                          </span>
+                          <span>{opt.label}</span>
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
