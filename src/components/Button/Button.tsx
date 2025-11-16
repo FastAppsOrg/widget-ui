@@ -4,15 +4,15 @@ import { Icon } from '../../icons';
 import { cn } from '../../utils';
 
 const sizeClasses: Record<string, string> = {
-  '3xs': 'h-[22px] px-2 text-xs',
-  '2xs': 'h-[24px] px-2.5 text-xs',
-  'xs': 'h-[26px] px-3 text-sm',
-  'sm': 'h-[28px] px-3.5 text-sm',
-  'md': 'h-[32px] px-4 text-base',
-  'lg': 'h-[36px] px-5 text-base',
-  'xl': 'h-[40px] px-6 text-lg',
-  '2xl': 'h-[44px] px-7 text-lg',
-  '3xl': 'h-[48px] px-8 text-xl',
+  '3xs': 'h-[22px] px-1 text-xs',      // 22px height, 4px x-padding, 12px text
+  '2xs': 'h-[24px] px-1.5 text-xs',    // 24px height, 6px x-padding, 12px text
+  'xs': 'h-[26px] px-2 text-sm',       // 26px height, 8px x-padding, 14px text
+  'sm': 'h-[28px] px-2.5 text-sm',     // 28px height, 10px x-padding, 14px text
+  'md': 'h-[32px] px-3 text-sm',       // 32px height, 12px x-padding, 14px text
+  'lg': 'h-[36px] px-3.5 text-sm',     // 36px height, 14px x-padding, 14px text
+  'xl': 'h-[40px] px-4 text-sm',       // 40px height, 16px x-padding, 14px text
+  '2xl': 'h-[44px] px-4 text-base',    // 44px height, 16px x-padding (token fixed), 16px text
+  '3xl': 'h-[48px] px-5 text-base',    // 48px height, 20px x-padding, 16px text
 };
 
 // Color definitions
