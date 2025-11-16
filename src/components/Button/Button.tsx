@@ -4,15 +4,15 @@ import { Icon } from '../../icons';
 import { cn } from '../../utils';
 
 const sizeClasses: Record<string, string> = {
-  '3xs': 'h-[22px] px-1 text-xs',      // 22px height, 4px x-padding, 12px text
-  '2xs': 'h-[24px] px-1.5 text-xs',    // 24px height, 6px x-padding, 12px text
-  'xs': 'h-[26px] px-2 text-sm',       // 26px height, 8px x-padding, 14px text
-  'sm': 'h-[28px] px-2.5 text-sm',     // 28px height, 10px x-padding, 14px text
-  'md': 'h-[32px] px-3 text-sm',       // 32px height, 12px x-padding, 14px text
-  'lg': 'h-[36px] px-3.5 text-sm',     // 36px height, 14px x-padding, 14px text
-  'xl': 'h-[40px] px-4 text-sm',       // 40px height, 16px x-padding, 14px text
-  '2xl': 'h-[44px] px-4 text-base',    // 44px height, 16px x-padding (token fixed), 16px text
-  '3xl': 'h-[48px] px-5 text-base',    // 48px height, 20px x-padding, 16px text
+  '3xs': 'h-[22px] px-1.5 text-xs',     // 22px height, 6px x-padding, 12px text
+  '2xs': 'h-[24px] px-2 text-xs',       // 24px height, 8px x-padding, 12px text
+  'xs':  'h-[26px] px-2.5 text-sm',     // 26px height, 10px x-padding, 14px text
+  'sm':  'h-[28px] px-3 text-sm',       // 28px height, 12px x-padding, 14px text
+  'md':  'h-[32px] px-3.5 text-sm',     // 32px height, 14px x-padding, 14px text
+  'lg':  'h-[36px] px-4 text-sm',       // 36px height, 16px x-padding, 14px text
+  'xl':  'h-[40px] px-[18px] text-sm',  // 40px height, 18px x-padding, 14px text
+  '2xl': 'h-[44px] px-[18px] text-base',// 44px height, 18px x-padding, 16px text
+  '3xl': 'h-[48px] px-[22px] text-base',// 48px height, 22px x-padding, 16px text
 };
 
 // Color definitions
@@ -49,14 +49,14 @@ const variantClasses: Record<string, Record<string, string>> = {
     danger: 'disabled:opacity-50 disabled:cursor-not-allowed',
   },
   outline: {
-    info: 'border-2 bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
-    primary: 'border-2 bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
-    secondary: 'border-2 bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
-    discovery: 'border-2 bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
-    success: 'border-2 bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
-    caution: 'border-2 bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
-    warning: 'border-2 bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
-    danger: 'border-2 bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
+    info: 'border bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
+    primary: 'border bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
+    secondary: 'border bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
+    discovery: 'border bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
+    success: 'border bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
+    caution: 'border bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
+    warning: 'border bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
+    danger: 'border bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
   },
   ghost: {
     info: 'bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
@@ -75,13 +75,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     {
       submit = false,
       label,
-      onClickAction,
+      onClickAction = 'loading',
       iconStart,
       iconEnd,
       style,
       iconSize = 'md',
       color = 'primary',
-      variant = 'solid',
+      variant,
       size = 'lg',
       pill = true,
       uniform = false,
@@ -98,6 +98,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     // Determine actual variant based on style prop
     const actualVariant = style ? (style === 'primary' ? 'solid' : 'outline') : variant;
+    const isVariantProvided = actualVariant !== undefined;
+    // When variant is not provided, we default to 'solid' but use token colors
+    const resolvedVariant: 'solid' | 'soft' | 'outline' | 'ghost' = (actualVariant ?? 'solid') as any;
 
     const colorConfig = buttonColors[actualColor as keyof typeof buttonColors];
     const baseColor = colorConfig.base;
@@ -117,29 +120,49 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     // Generate dynamic styles based on variant
     const getVariantStyles = () => {
-      switch (actualVariant) {
+      if (!isVariantProvided) {
+        // Token colors path when variant is not explicitly provided
+        switch (resolvedVariant) {
+          case 'solid':
+            return { backgroundColor: baseColor, color: '#ffffff' } as React.CSSProperties;
+          case 'soft': {
+            const rgb = hexToRgb(baseColor);
+            return { backgroundColor: rgb ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.1)` : baseColor, color: baseColor } as React.CSSProperties;
+          }
+          case 'outline':
+            return { borderColor: baseColor, color: baseColor, backgroundColor: 'transparent' } as React.CSSProperties;
+          case 'ghost':
+            return { color: baseColor, backgroundColor: 'transparent' } as React.CSSProperties;
+          default:
+            return {};
+        }
+      }
+      // Neutral palette per spec when variant is provided
+      switch (resolvedVariant) {
         case 'solid':
           return {
-            backgroundColor: baseColor,
+            // solid: basic color 181818
+            backgroundColor: '#181818',
             color: '#ffffff',
           } as React.CSSProperties;
         case 'soft': {
-          // Convert hex to rgba with 10% opacity for soft variant
-          const rgb = hexToRgb(baseColor);
           return {
-            backgroundColor: rgb ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.1)` : baseColor,
-            color: baseColor,
+            // soft: basic color EBEBEB
+            backgroundColor: '#EBEBEB',
+            color: '#181818',
           } as React.CSSProperties;
         }
         case 'outline':
           return {
-            borderColor: baseColor,
-            color: baseColor,
+            // outline: no color + border D8D8D8
+            borderColor: '#D8D8D8',
+            color: '#181818',
             backgroundColor: 'transparent',
           } as React.CSSProperties;
         case 'ghost':
           return {
-            color: baseColor,
+            // ghost: no color
+            color: '#181818',
             backgroundColor: 'transparent',
           } as React.CSSProperties;
         default:
@@ -147,26 +170,57 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       }
     };
 
-    // Get hover background color for soft/outline/ghost variants
-    const getHoverBackgroundColor = () => {
-      if (actualVariant === 'solid') {
-        return hoverColor;
+    // Get hover styles per variant
+    const getHoverStyles = (): React.CSSProperties => {
+      if (!isVariantProvided) {
+        // Token-based hover when variant not provided
+        switch (resolvedVariant) {
+          case 'solid':
+            return { backgroundColor: hoverColor };
+          case 'soft': {
+            const rgb = hexToRgb(baseColor);
+            return rgb ? { backgroundColor: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.2)` } : {};
+          }
+          case 'outline': {
+            const rgb = hexToRgb(baseColor);
+            return {
+              backgroundColor: rgb ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.1)` : 'transparent',
+              borderColor: hoverColor,
+            };
+          }
+          case 'ghost': {
+            const rgb = hexToRgb(baseColor);
+            return rgb ? { backgroundColor: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.1)` } : {};
+          }
+          default:
+            return {};
+        }
       }
-      const rgb = hexToRgb(baseColor);
-      if (rgb) {
-        const opacity = actualVariant === 'soft' ? 0.2 : 0.1;
-        return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${opacity})`;
+      switch (resolvedVariant) {
+        case 'solid':
+          // hover color: 303030
+          return { backgroundColor: '#303030' };
+        case 'soft':
+          // hover color: E2E2E2
+          return { backgroundColor: '#E2E2E2' };
+        case 'outline':
+          // hover: FAFAFA + border CBCBCB
+          return { backgroundColor: '#FAFAFA', borderColor: '#CBCBCB' };
+        case 'ghost':
+          // hover: EBEBEB
+          return { backgroundColor: '#EBEBEB' };
+        default:
+          return {};
       }
-      return baseColor;
     };
 
     const variantStyles = getVariantStyles();
-    const hoverBgColor = getHoverBackgroundColor();
+    const hoverStylesSpec = getHoverStyles();
 
-    const baseClasses = 'inline-flex items-center justify-center font-normal transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed';
+    const baseClasses = 'relative inline-flex items-center justify-center font-normal transition-colors disabled:cursor-not-allowed';
     
     const sizeClass = sizeClasses[size] || sizeClasses.lg;
-    const variantClass = variantClasses[actualVariant]?.[actualColor] || variantClasses.solid.primary;
+    const variantClass = variantClasses[resolvedVariant]?.[actualColor] || variantClasses.solid.primary;
     const borderRadiusClass = pill ? 'rounded-full' : 'rounded-md';
     const uniformClass = uniform ? 'aspect-square' : '';
     const blockClass = block ? 'w-full' : '';
@@ -174,13 +228,15 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     // Add hover styles using state
     const [isHovered, setIsHovered] = React.useState(false);
+    const [isLoading, setIsLoading] = React.useState(false);
+    // Remove blue focus ring entirely per spec
     
-    const hoverStyles: React.CSSProperties = disabled || !isHovered 
-      ? {} 
-      : { backgroundColor: hoverBgColor };
+    const hoverStyles: React.CSSProperties = (disabled || !isHovered || isLoading)
+      ? {}
+      : hoverStylesSpec;
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      if (disabled) {
+      if (disabled || isLoading) {
         e.preventDefault();
         return;
       }
@@ -192,6 +248,17 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       if (onClickAction) {
         // Dispatch action (in a real app, this would use a state management system)
         console.log('Action dispatched:', onClickAction);
+        // Trigger loading when action is 'loading'
+        if (
+          onClickAction === 'loading' ||
+          (typeof onClickAction === 'object' && (onClickAction as any)?.type === 'loading')
+        ) {
+          setIsLoading(true);
+          // Keep loading for 2 seconds
+          window.setTimeout(() => {
+            setIsLoading(false);
+          }, 1000);
+        }
       }
     };
 
@@ -199,6 +266,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         type={submit ? 'submit' : 'button'}
+        // Keep background and interactivity style; do not disable visually during loading
         disabled={disabled}
         onClick={handleClick}
         onMouseEnter={() => !disabled && setIsHovered(true)}
@@ -211,25 +279,57 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           borderRadiusClass,
           uniformClass,
           blockClass,
-          disabledClass,
+          disabled ? 'opacity-50 cursor-not-allowed' : '',
+          isLoading ? 'cursor-default' : '',
           className
         )}
         {...props}
       >
-        {iconStart && (
-          <Icon
-            name={iconStart}
-            size={iconSize}
-            className={label ? 'mr-2' : ''}
-          />
+        {/* Overlay spinner, absolute centered; preserves size by keeping label/icons rendered with opacity-0 */}
+        {isLoading && (
+          <span
+            className="absolute inset-0 flex items-center justify-center"
+            aria-hidden="true"
+          >
+            <span
+              className="inline-block h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin"
+            />
+          </span>
         )}
-        {label && <span>{label}</span>}
+        {iconStart && (
+          <span
+            className={cn(
+              label ? 'mr-2' : '',
+              'transition-opacity duration-300',
+              isLoading ? 'opacity-0' : 'opacity-100'
+            )}
+            style={{ transitionDuration: '250ms' }}
+          >
+            <Icon name={iconStart} size={iconSize} />
+          </span>
+        )}
+        {label && (
+          <span
+            className={cn(
+              'transition-opacity duration-300',
+              isLoading ? 'opacity-0' : 'opacity-100'
+            )}
+            style={{ transitionDuration: '250ms' }}
+          >
+            {label}
+          </span>
+        )}
         {iconEnd && (
-          <Icon
-            name={iconEnd}
-            size={iconSize}
-            className={label ? 'ml-2' : ''}
-          />
+          <span
+            className={cn(
+              label ? 'ml-2' : '',
+              'transition-opacity duration-300',
+              isLoading ? 'opacity-0' : 'opacity-100'
+            )}
+            style={{ transitionDuration: '250ms' }}
+          >
+            <Icon name={iconEnd} size={iconSize} />
+          </span>
         )}
       </button>
     );

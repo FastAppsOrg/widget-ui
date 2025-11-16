@@ -1,4 +1,5 @@
 import type { IconSize } from '../types';
+import type React from 'react';
 
 export type IconName =
   | 'agent'
@@ -69,5 +70,6 @@ export interface IconProps {
   size?: IconSize;
   className?: string;
   color?: string;
+  style?: React.CSSProperties;
 }
 

@@ -16,7 +16,7 @@ export interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonE
   /**
    * Action dispatched on click.
    */
-  onClickAction?: Action;
+  onClickAction?: Action | string;
 
   /**
    * Icon shown before the label. Can be used without a label to create an icon-only button.
