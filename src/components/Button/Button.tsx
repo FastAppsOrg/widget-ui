@@ -217,7 +217,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const variantStyles = getVariantStyles();
     const hoverStylesSpec = getHoverStyles();
 
-    const baseClasses = 'relative inline-flex items-center justify-center font-normal transition-colors disabled:cursor-not-allowed';
+    const baseClasses = 'relative inline-flex items-center justify-center font-normal transition-colors duration-100 transition-transform active:scale-[0.97] disabled:cursor-not-allowed';
     
     const sizeClass = sizeClasses[size] || sizeClasses.lg;
     const variantClass = variantClasses[resolvedVariant]?.[actualColor] || variantClasses.solid.primary;
@@ -229,9 +229,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     // Add hover styles using state
     const [isHovered, setIsHovered] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
+    const [isFading, setIsFading] = React.useState(false);
     // Remove blue focus ring entirely per spec
     
-    const hoverStyles: React.CSSProperties = (disabled || !isHovered || isLoading)
+    const hoverStyles: React.CSSProperties = (disabled || !isHovered || isLoading || isFading)
       ? {}
       : hoverStylesSpec;
 
@@ -253,11 +254,17 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           onClickAction === 'loading' ||
           (typeof onClickAction === 'object' && (onClickAction as any)?.type === 'loading')
         ) {
-          setIsLoading(true);
-          // Keep loading for 2 seconds
+          // Immediately start fade for label/icons
+          setIsFading(true);
+          // Start loading after 200ms to allow label/icon transition
           window.setTimeout(() => {
-            setIsLoading(false);
-          }, 1000);
+            setIsLoading(true);
+            // Keep loading for 1s after it starts
+            window.setTimeout(() => {
+              setIsLoading(false);
+              setIsFading(false);
+            }, 1000);
+          }, 200);
         }
       }
     };
@@ -300,10 +307,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           <span
             className={cn(
               label ? 'mr-2' : '',
-              'transition-opacity duration-300',
-              isLoading ? 'opacity-0' : 'opacity-100'
+              'transition-opacity duration-200',
+              (isFading || isLoading) ? 'opacity-0' : 'opacity-100'
             )}
-            style={{ transitionDuration: '250ms' }}
+            style={{ transitionDuration: '200ms' }}
           >
             <Icon name={iconStart} size={iconSize} />
           </span>
@@ -311,10 +318,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {label && (
           <span
             className={cn(
-              'transition-opacity duration-300',
-              isLoading ? 'opacity-0' : 'opacity-100'
+              'transition-opacity duration-200',
+              (isFading || isLoading) ? 'opacity-0' : 'opacity-100'
             )}
-            style={{ transitionDuration: '250ms' }}
+            style={{ transitionDuration: '200ms' }}
           >
             {label}
           </span>
@@ -323,10 +330,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           <span
             className={cn(
               label ? 'ml-2' : '',
-              'transition-opacity duration-300',
-              isLoading ? 'opacity-0' : 'opacity-100'
+              'transition-opacity duration-200',
+              (isFading || isLoading) ? 'opacity-0' : 'opacity-100'
             )}
-            style={{ transitionDuration: '250ms' }}
+            style={{ transitionDuration: '200ms' }}
           >
             <Icon name={iconEnd} size={iconSize} />
           </span>
