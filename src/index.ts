@@ -2,7 +2,7 @@
 export * from './components';
 
 // Export icons
-export * from './icons';
+export * as Icons from './icons';
 
 // Export utilities
 export * from './utils';

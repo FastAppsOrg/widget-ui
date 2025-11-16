@@ -4,6 +4,20 @@ export { Plus } from './Plus';
 export { Search } from './Search';
 export { ChevronLeft } from './ChevronLeft';
 export { ChevronRight } from './ChevronRight';
+export { Agent } from './Agent';
+export { Analytics } from './Analytics';
+export { Atom } from './Atom';
+export { Bolt } from './Bolt';
+export { BookOpen } from './BookOpen';
+export { BookClock } from './BookClock';
+export { BookClosed } from './BookClosed';
+export { Calendar } from './Calendar';
+export { Chart } from './Chart';
+export { CheckCircle } from './CheckCircle';
+export { CheckCircleFilled } from './CheckCircleFilled';
+export { CircleQuestion } from './CircleQuestion';
+export { Compass } from './Compass';
+export { Confetti } from './Confetti';
 
 // Icon registry - maps icon names to components
 import React from 'react';
@@ -12,6 +26,20 @@ import { Plus } from './Plus';
 import { Search } from './Search';
 import { ChevronLeft } from './ChevronLeft';
 import { ChevronRight } from './ChevronRight';
+import { Agent } from './Agent';
+import { Analytics } from './Analytics';
+import { Atom } from './Atom';
+import { Bolt } from './Bolt';
+import { BookOpen } from './BookOpen';
+import { BookClock } from './BookClock';
+import { BookClosed } from './BookClosed';
+import { Calendar } from './Calendar';
+import { Chart } from './Chart';
+import { CheckCircle } from './CheckCircle';
+import { CheckCircleFilled } from './CheckCircleFilled';
+import { CircleQuestion } from './CircleQuestion';
+import { Compass } from './Compass';
+import { Confetti } from './Confetti';
 import type { IconName } from '../icon.types';
 
 export const iconRegistry: Record<IconName, React.ComponentType<any>> = {
@@ -21,22 +49,22 @@ export const iconRegistry: Record<IconName, React.ComponentType<any>> = {
   'chevron-left': ChevronLeft,
   'chevron-right': ChevronRight,
   // Placeholder components for other icons (to be implemented)
-  agent: Check,
-  analytics: Check,
-  atom: Check,
+  agent: Agent,
+  analytics: Analytics,
+  atom: Atom,
   batch: Check,
-  bolt: Check,
-  'book-open': Check,
-  'book-closed': Check,
-  'book-clock': Check,
+  bolt: Bolt,
+  'book-open': BookOpen,
+  'book-closed': BookClosed,
+  'book-clock': BookClock,
   bug: Check,
-  calendar: Check,
-  chart: Check,
-  'check-circle': Check,
-  'check-circle-filled': Check,
-  'circle-question': Check,
-  compass: Check,
-  confetti: Check,
+  calendar: Calendar,
+  chart: Chart,
+  'check-circle': CheckCircle,
+  'check-circle-filled': CheckCircleFilled,
+  'circle-question': CircleQuestion,
+  compass: Compass,
+  confetti: Confetti,
   cube: Check,
   desktop: Check,
   document: Check,

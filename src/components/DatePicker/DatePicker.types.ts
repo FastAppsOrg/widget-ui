@@ -1,24 +1,82 @@
-import type { Size } from '../../types';
+import type { Size, Variant, Action } from '../../types';
 
-export interface DatePickerProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type' | 'size'> {
+export interface DatePickerProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   /**
-   * Size of the date picker
+   * The name of the form control field. When the form is submitted, the value
+   * will be included in the onSubmitAction payload using this key. Dot paths are supported.
+   */
+  name: string;
+
+  /**
+   * Action dispatched when the date value changes.
+   */
+  onChangeAction?: Action;
+
+  /**
+   * Placeholder text shown when no date is selected.
+   */
+  placeholder?: string;
+
+  /**
+   * Initial ISO date string (e.g., 2024-01-31).
+   */
+  defaultValue?: string;
+
+  /**
+   * Earliest selectable ISO date (inclusive).
+   */
+  min?: string;
+
+  /**
+   * Latest selectable ISO date (inclusive).
+   */
+  max?: string;
+
+  /**
+   * Visual variant of the control.
+   * @default "outline"
+   */
+  variant?: Variant;
+
+  /**
+   * Controls the size of the control.
+   * @default "md"
    */
   size?: Size;
 
   /**
-   * Whether the date picker is in an error state
+   * Preferred side to render the calendar.
    */
-  error?: boolean;
+  side?: 'top' | 'bottom' | 'left' | 'right';
 
   /**
-   * Helper text to display below the date picker
+   * Preferred alignment of the calendar relative to the control.
+   * @default "center"
    */
-  helperText?: string;
+  align?: 'start' | 'center' | 'end';
 
   /**
-   * Label text for the date picker
+   * Determines if the datepicker should be a fully rounded pill shape.
+   * @default false
    */
-  label?: string;
+  pill?: boolean;
+
+  /**
+   * Extends datepicker to 100% width.
+   * @default false
+   */
+  block?: boolean;
+
+  /**
+   * Show a clear control to unset the value.
+   * @default false
+   */
+  clearable?: boolean;
+
+  /**
+   * Disables interactions and applies disabled styles.
+   * @default false
+   */
+  disabled?: boolean;
 }
 

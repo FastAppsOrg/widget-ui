@@ -33,7 +33,7 @@ export type { RowProps } from './Row/Row.types';
 export { Col } from './Col';
 export type { ColProps } from './Col/Col.types';
 
-export { Spacer } from './Spacer';
+export { Spacer } from './Spacer/index';
 export type { SpacerProps } from './Spacer/Spacer.types';
 
 export { Divider } from './Divider';
