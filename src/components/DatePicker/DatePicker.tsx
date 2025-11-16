@@ -79,6 +79,15 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
     },
     ref
   ) => {
+    const containerRef = React.useRef<HTMLDivElement | null>(null);
+    const setRefs = (node: HTMLDivElement | null) => {
+      containerRef.current = node;
+      if (typeof ref === 'function') {
+        ref(node);
+      } else if (ref) {
+        (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
+      }
+    };
     const spec = sizeSpec[size] || sizeSpec['md'];
     const controlStyle: React.CSSProperties = {
       height: spec.heightPx
@@ -86,9 +95,50 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
     const [open, setOpen] = React.useState(false);
     const [value, setValue] = React.useState<DateLike>(defaultValue ? new Date(defaultValue) : null);
     const [viewMonth, setViewMonth] = React.useState<Date>(startOfMonth(value ?? new Date()));
+    const [shouldRenderPopover, setShouldRenderPopover] = React.useState<boolean>(false);
+    const [popoverAnim, setPopoverAnim] = React.useState<'enter' | 'exit'>('exit');
+    React.useEffect(() => {
+      if (open) {
+        setShouldRenderPopover(true);
+        const id = requestAnimationFrame(() => {
+          setPopoverAnim('enter');
+        });
+        return () => cancelAnimationFrame(id);
+      }
+      // start exit animation
+      setPopoverAnim('exit');
+      const t = setTimeout(() => setShouldRenderPopover(false), 110);
+      return () => clearTimeout(t);
+    }, [open]);
+
+    // Close on outside click or Escape
+    React.useEffect(() => {
+      if (!open) return;
+      const handlePointer = (e: MouseEvent | TouchEvent) => {
+        const root = containerRef.current;
+        if (!root) return;
+        const target = e.target as Node | null;
+        if (target && root.contains(target)) return;
+        setOpen(false);
+      };
+      const handleKey = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          setOpen(false);
+        }
+      };
+      document.addEventListener('mousedown', handlePointer);
+      document.addEventListener('touchstart', handlePointer, { passive: true });
+      document.addEventListener('keydown', handleKey);
+      return () => {
+        document.removeEventListener('mousedown', handlePointer);
+        document.removeEventListener('touchstart', handlePointer);
+        document.removeEventListener('keydown', handleKey);
+      };
+    }, [open]);
 
     const formatted = value ? formatISO(value) : '';
     const showText = value ? formatted : (placeholder ?? 'Pick a date');
+    const controlTextColor = value ? '#0E0E0E' : '#8F8F8F';
 
     const baseField =
       'relative inline-flex items-center justify-between transition-colors duration-300 whitespace-nowrap';
@@ -189,7 +239,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
     }, [viewMonth, min, max]);
 
     return (
-      <div ref={ref} className={cn('relative inline-block', widthClass)} {...props}>
+      <div ref={setRefs} className={cn('relative inline-block', widthClass)} {...props}>
         {/* Hidden input for form posting */}
         <input type="hidden" name={name} value={formatted} />
         {/* Control */}
@@ -211,12 +261,12 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
           <span className="flex items-center gap-1">
             <Icon
               name="calendar"
-              className={cn(`text-[#8F8F8F]`)}
-              style={{ width: spec.icon.w, height: spec.icon.h, marginRight: spec.iconMarginRightPx }}
+              className={cn()}
+              style={{ width: spec.icon.w, height: spec.icon.h, marginRight: spec.iconMarginRightPx, color: controlTextColor }}
             />
             <span
-              className={cn('text-[#8F8F8F]')}
-              style={{ paddingLeft: textPaddingX, paddingRight: textPaddingX }}
+              className={cn()}
+              style={{ paddingLeft: textPaddingX, paddingRight: textPaddingX, color: controlTextColor }}
             >
               {showText}
             </span>
@@ -235,45 +285,98 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
         </button>
 
         {/* Popover calendar */}
-        {open && (
+        {shouldRenderPopover && (
           <div
             className={cn(
-              'absolute z-50 bg-white rounded-lg shadow-lg border border-gray-200',
-              'p-3 w-80',
+              'absolute z-50',
               popSide,
               popAlign
             )}
           >
-            <div className="flex items-center justify-between mb-2 px-1">
+            <div
+              className={cn(
+                'bg-white rounded-lg shadow-lg border-[0.5px] border-[#D6D6D6]',
+                'p-3',
+                // enter/exit animation via keyframes (more reliable on mount/unmount)
+                popoverAnim === 'enter' ? 'datepicker-pop-enter' : 'datepicker-pop-exit'
+              )}
+              style={{ width: 234, willChange: 'opacity, transform' }}
+            >
+            {/* Keyframes scoped for this component instance */}
+            <style>
+              {`
+                @keyframes dpEnter {
+                  0% { opacity: 0; transform: translateY(-4px) scale(0.96); }
+                  100% { opacity: 1; transform: translateY(0) scale(1); }
+                }
+                @keyframes dpExit {
+                  0% { opacity: 1; transform: translateY(0) scale(1); }
+                  100% { opacity: 0; transform: translateY(-4px) scale(0.96); }
+                }
+                .datepicker-pop-enter { animation: dpEnter 120ms ease-out forwards; }
+                .datepicker-pop-exit { animation: dpExit 100ms ease-in forwards; }
+              `}
+            </style>
+            <div className={cn('flex items-center justify-between px-1', 'mb-[6px]')}>
               <button
                 type="button"
-                className="p-2 rounded-md hover:bg-gray-100"
+                className="p-2 rounded-md hover:bg-[#EBEBEB]"
                 onClick={() => setViewMonth(addMonths(viewMonth, -1))}
               >
-                <Icon name="chevron-left" />
+                <Icon
+                  name="chevron-left"
+                  className="text-[#5D5D5D]"
+                  style={{ width: 16, height: 16 }}
+                />
               </button>
-              <div className="font-semibold text-lg">
-                {viewMonth.toLocaleString('default', { month: 'long' })} {viewMonth.getFullYear()}
+              <div
+                style={{ fontSize: 13, color: '#282828' }}
+              >
+                {viewMonth.toLocaleString('default', { month: 'long' })}{' '}
+                {viewMonth.getFullYear()}
               </div>
               <button
                 type="button"
-                className="p-2 rounded-md hover:bg-gray-100"
+                className="p-2 rounded-md hover:bg-[#EBEBEB]"
                 onClick={() => setViewMonth(addMonths(viewMonth, 1))}
               >
-                <Icon name="chevron-right" />
+                <Icon
+                  name="chevron-right"
+                  className="text-[#5D5D5D]"
+                  style={{ width: 16, height: 16 }}
+                />
               </button>
             </div>
-            <div className="grid grid-cols-7 gap-1 text-center text-sm text-gray-500 px-1">
-              {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((d) => (
-                <div key={d} className="py-1">
-                  {d}
-                </div>
-              ))}
+            <div className="grid gap-0 text-center px-0"
+              style={{ gridTemplateColumns: 'repeat(7, 30px)' }}
+            >
+              {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((d) => {
+                return (
+                  <div
+                    key={d}
+                    className="flex items-center justify-center"
+                    style={{ width: 30, height: 30, fontSize: 12, color: '#5D5D5D' }}
+                  >
+                    {d}
+                  </div>
+                );
+              })}
             </div>
-            <div className="grid grid-cols-7 gap-1 mt-1 px-1">
+            <div className="grid gap-0 mt-0.5 px-0"
+              style={{ gridTemplateColumns: 'repeat(7, 30px)' }}
+            >
               {days.map(({ date, muted, disabled: dis }) => {
                 const isSelected = !!value && formatISO(date) === formatISO(value);
                 const isToday = formatISO(date) === formatISO(new Date());
+                if (muted) {
+                  // Hide previous/next month numbers but keep grid alignment
+                  return (
+                    <div
+                      key={date.toISOString()}
+                      style={{ width: 30, height: 30 }}
+                    />
+                  );
+                }
                 return (
                   <button
                     key={date.toISOString()}
@@ -281,24 +384,24 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
                     disabled={dis}
                     onClick={() => selectDate(date)}
                     className={cn(
-                      'relative h-9 w-9 rounded-full text-sm transition-colors',
-                      dis
-                        ? 'text-gray-300 cursor-not-allowed'
-                        : 'hover:bg-gray-100',
-                      muted ? 'text-gray-400' : 'text-gray-800',
-                      isSelected ? 'bg-black text-white hover:bg-black' : ''
+                      'relative rounded-full text-sm transition-colors',
+                      dis ? 'text-gray-300 cursor-not-allowed' : '',
+                      muted ? 'text-[#5D5D5D]' : '',
+                      !muted ? 'text-[#282828]' : '',
+                      isSelected ? 'bg-black text-white hover:bg-black' : 'hover:ring-1 hover:ring-[#282828] hover:bg-transparent'
                     )}
+                    style={{ width: 30, height: 30 }}
                   >
-                    <span>{date.getDate()}</span>
-                    {!isSelected && isToday && (
-                      <span className="block w-1 h-1 bg-gray-400 rounded-full mx-auto mt-1" />
-                    )}
+                    <span>
+                      {date.getDate()}
+                    </span>
+                    {/* no dot for today when unselected under the new spec */}
                   </button>
                 );
               })}
             </div>
-            <div className="flex items-center justify-between mt-3">
-              {clearable && (
+            {clearable && (
+              <div className="flex items-center justify-end mt-3">
                 <button
                   type="button"
                   className="px-3 py-1.5 rounded-md text-sm text-gray-700 hover:bg-gray-100"
@@ -306,15 +409,8 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
                 >
                   Clear
                 </button>
-              )}
-              <div className="flex-1" />
-              <button
-                type="button"
-                className="px-3 py-1.5 rounded-md text-sm text-gray-700 hover:bg-gray-100"
-                onClick={() => setOpen(false)}
-              >
-                Close
-              </button>
+              </div>
+            )}
             </div>
           </div>
         )}
