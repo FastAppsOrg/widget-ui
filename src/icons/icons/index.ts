@@ -18,6 +18,47 @@ export { CheckCircleFilled } from './CheckCircleFilled';
 export { CircleQuestion } from './CircleQuestion';
 export { Compass } from './Compass';
 export { Confetti } from './Confetti';
+export { Cube } from './Cube';
+export { Desktop } from './Desktop';
+export { Document } from './Document';
+export { DotsHorizontal } from './DotsHorizontal';
+export { DotsVertical } from './DotsVertical';
+export { EmptyCircle } from './EmptyCircle';
+export { ExternalLink } from './ExternalLink';
+export { Globe } from './Globe';
+export { Keys } from './Keys';
+export { Lab } from './Lab';
+export { Images } from './Images';
+export { Info } from './Info';
+export { Lifesaver } from './Lifesaver';
+export { Lightbulb } from './Lightbulb';
+export { Mail } from './Mail';
+export { MapPin } from './MapPin';
+export { Maps } from './Maps';
+export { Mobile } from './Mobile';
+export { Name } from './Name';
+export { Notebook } from './Notebook';
+export { NotebookPencil } from './NotebookPencil';
+export { PageBlank } from './PageBlank';
+export { Phone } from './Phone';
+export { Play } from './Play';
+export { Profile } from './Profile';
+export { ProfileCard } from './ProfileCard';
+export { Reload } from './Reload';
+export { Star } from './Star';
+export { StarFilled } from './StarFilled';
+export { Sparkle } from './Sparkle';
+export { SparkleDouble } from './SparkleDouble';
+export { SquareCode } from './SquareCode';
+export { SquareImage } from './SquareImage';
+export { SquareText } from './SquareText';
+export { Suitcase } from './Suitcase';
+export { SettingsSlider } from './SettingsSlider';
+export { User } from './User';
+export { Wreath } from './Wreath';
+export { Write } from './Write';
+export { WriteAlt } from './WriteAlt';
+export { WriteAlt2 } from './WriteAlt2';
 
 // Icon registry - maps icon names to components
 import React from 'react';
@@ -40,6 +81,47 @@ import { CheckCircleFilled } from './CheckCircleFilled';
 import { CircleQuestion } from './CircleQuestion';
 import { Compass } from './Compass';
 import { Confetti } from './Confetti';
+import { Cube } from './Cube';
+import { Desktop } from './Desktop';
+import { Document } from './Document';
+import { DotsHorizontal } from './DotsHorizontal';
+import { DotsVertical } from './DotsVertical';
+import { EmptyCircle } from './EmptyCircle';
+import { ExternalLink } from './ExternalLink';
+import { Globe } from './Globe';
+import { Keys } from './Keys';
+import { Lab } from './Lab';
+import { Images } from './Images';
+import { Info } from './Info';
+import { Lifesaver } from './Lifesaver';
+import { Lightbulb } from './Lightbulb';
+import { Mail } from './Mail';
+import { MapPin } from './MapPin';
+import { Maps } from './Maps';
+import { Mobile } from './Mobile';
+import { Name } from './Name';
+import { Notebook } from './Notebook';
+import { NotebookPencil } from './NotebookPencil';
+import { PageBlank } from './PageBlank';
+import { Phone } from './Phone';
+import { Play } from './Play';
+import { Profile } from './Profile';
+import { ProfileCard } from './ProfileCard';
+import { Reload } from './Reload';
+import { Star } from './Star';
+import { StarFilled } from './StarFilled';
+import { Sparkle } from './Sparkle';
+import { SparkleDouble } from './SparkleDouble';
+import { SquareCode } from './SquareCode';
+import { SquareImage } from './SquareImage';
+import { SquareText } from './SquareText';
+import { Suitcase } from './Suitcase';
+import { SettingsSlider } from './SettingsSlider';
+import { User } from './User';
+import { Wreath } from './Wreath';
+import { Write } from './Write';
+import { WriteAlt } from './WriteAlt';
+import { WriteAlt2 } from './WriteAlt2';
 import type { IconName } from '../icon.types';
 
 export const iconRegistry: Record<IconName, React.ComponentType<any>> = {
@@ -65,47 +147,47 @@ export const iconRegistry: Record<IconName, React.ComponentType<any>> = {
   'circle-question': CircleQuestion,
   compass: Compass,
   confetti: Confetti,
-  cube: Check,
-  desktop: Check,
-  document: Check,
+  cube: Cube,
+  desktop: Desktop,
+  document: Document,
   dot: Check,
-  'dots-horizontal': Check,
-  'dots-vertical': Check,
-  'empty-circle': Check,
-  'external-link': Check,
-  globe: Check,
-  keys: Check,
-  lab: Check,
-  images: Check,
-  info: Check,
-  lifesaver: Check,
-  lightbulb: Check,
-  mail: Check,
-  'map-pin': Check,
-  maps: Check,
-  mobile: Check,
-  name: Check,
-  notebook: Check,
-  'notebook-pencil': Check,
-  'page-blank': Check,
-  phone: Check,
-  play: Check,
-  profile: Check,
-  'profile-card': Check,
-  reload: Check,
-  star: Check,
-  'star-filled': Check,
-  sparkle: Check,
-  'sparkle-double': Check,
-  'square-code': Check,
-  'square-image': Check,
-  'square-text': Check,
-  suitcase: Check,
-  'settings-slider': Check,
-  user: Check,
-  wreath: Check,
-  write: Check,
-  'write-alt': Check,
-  'write-alt2': Check,
+  'dots-horizontal': DotsHorizontal,
+  'dots-vertical': DotsVertical,
+  'empty-circle': EmptyCircle,
+  'external-link': ExternalLink,
+  globe: Globe,
+  keys: Keys,
+  lab: Lab,
+  images: Images,
+  info: Info,
+  lifesaver: Lifesaver,
+  lightbulb: Lightbulb,
+  mail: Mail,
+  'map-pin': MapPin,
+  maps: Maps,
+  mobile: Mobile,
+  name: Name,
+  notebook: Notebook,
+  'notebook-pencil': NotebookPencil,
+  'page-blank': PageBlank,
+  phone: Phone,
+  play: Play,
+  profile: Profile,
+  'profile-card': ProfileCard,
+  reload: Reload,
+  star: Star,
+  'star-filled': StarFilled,
+  sparkle: Sparkle,
+  'sparkle-double': SparkleDouble,
+  'square-code': SquareCode,
+  'square-image': SquareImage,
+  'square-text': SquareText,
+  suitcase: Suitcase,
+  'settings-slider': SettingsSlider,
+  user: User,
+  wreath: Wreath,
+  write: Write,
+  'write-alt': WriteAlt,
+  'write-alt2': WriteAlt2,
 } as any;
 
