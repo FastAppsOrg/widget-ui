@@ -2,18 +2,28 @@ import React from 'react';
 import type { DatePickerProps } from './DatePicker.types';
 import { cn } from '../../utils';
 import { Icon } from '../../icons';
+import type { Size } from '../../types';
 
-// Size map reusing button heights and paddings for consistency
-const sizeClasses: Record<string, string> = {
-  '3xs': 'h-[22px] px-2 text-xs',
-  '2xs': 'h-[24px] px-2.5 text-xs',
-  'xs': 'h-[26px] px-3 text-sm',
-  'sm': 'h-[28px] px-3.5 text-sm',
-  'md': 'h-[32px] px-4 text-base',
-  'lg': 'h-[36px] px-5 text-base',
-  'xl': 'h-[40px] px-6 text-lg',
-  '2xl': 'h-[44px] px-7 text-lg',
-  '3xl': 'h-[48px] px-8 text-xl',
+// Size specifications based on requirements
+const sizeSpec: Record<Size, {
+  fontPx: number;
+  icon: { w: number; h: number };
+  rightSvg: { w: number; h: number };
+  heightPx: number;
+  paddingXClass: string;
+  // new per-size spacings
+  iconMarginRightPx: number;
+  arrowMarginLeftPx: number;
+}> = {
+  '3xs': { fontPx: 12, icon: { w: 14, h: 14 }, rightSvg: { w: 6, h: 9 }, heightPx: 22, paddingXClass: 'px-1.5', iconMarginRightPx: 5, arrowMarginLeftPx: 5 },
+  '2xs': { fontPx: 12, icon: { w: 16, h: 16 }, rightSvg: { w: 6, h: 9 }, heightPx: 24, paddingXClass: 'px-2',   iconMarginRightPx: 5, arrowMarginLeftPx: 5 },
+  'xs':  { fontPx: 14, icon: { w: 16, h: 16 }, rightSvg: { w: 7, h: 11 }, heightPx: 26, paddingXClass: 'px-2',   iconMarginRightPx: 7, arrowMarginLeftPx: 7 },
+  'sm':  { fontPx: 14, icon: { w: 16, h: 16 }, rightSvg: { w: 7, h: 11 }, heightPx: 28, paddingXClass: 'px-2',   iconMarginRightPx: 7, arrowMarginLeftPx: 7 },
+  'md':  { fontPx: 14, icon: { w: 18, h: 18 }, rightSvg: { w: 8, h: 12 }, heightPx: 32, paddingXClass: 'px-3',   iconMarginRightPx: 7, arrowMarginLeftPx: 9 },
+  'lg':  { fontPx: 14, icon: { w: 18, h: 18 }, rightSvg: { w: 8, h: 12 }, heightPx: 36, paddingXClass: 'px-3',   iconMarginRightPx: 8, arrowMarginLeftPx: 9 },
+  'xl':  { fontPx: 14, icon: { w: 18, h: 18 }, rightSvg: { w: 8, h: 12 }, heightPx: 40, paddingXClass: 'px-3',   iconMarginRightPx: 8, arrowMarginLeftPx: 9 },
+  '2xl': { fontPx: 16, icon: { w: 20, h: 20 }, rightSvg: { w: 8, h: 12 }, heightPx: 44, paddingXClass: 'px-3',   iconMarginRightPx: 9, arrowMarginLeftPx: 11 },
+  '3xl': { fontPx: 16, icon: { w: 20, h: 20 }, rightSvg: { w: 9, h: 13 }, heightPx: 48, paddingXClass: 'px-3',   iconMarginRightPx: 10, arrowMarginLeftPx: 12 },
 };
 
 type DateLike = Date | null;
@@ -63,11 +73,16 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
       block = false,
       clearable = false,
       disabled = false,
+      textPaddingX = 0,
       className,
       ...props
     },
     ref
   ) => {
+    const spec = sizeSpec[size] || sizeSpec['md'];
+    const controlStyle: React.CSSProperties = {
+      height: spec.heightPx
+    };
     const [open, setOpen] = React.useState(false);
     const [value, setValue] = React.useState<DateLike>(defaultValue ? new Date(defaultValue) : null);
     const [viewMonth, setViewMonth] = React.useState<Date>(startOfMonth(value ?? new Date()));
@@ -76,22 +91,33 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
     const showText = value ? formatted : (placeholder ?? 'Pick a date');
 
     const baseField =
-      'relative inline-flex items-center justify-between w-full transition-colors duration-300';
-    const padding = sizeClasses[size] || sizeClasses.md;
-    const radius = pill ? 'rounded-full' : 'rounded-xl';
+      'relative inline-flex items-center justify-between transition-colors duration-300 whitespace-nowrap';
+    const padding = spec.paddingXClass;
+    const sizeToRadius: Record<Size, string> = {
+      '3xs': 'rounded-md',  // ~6px
+      '2xs': 'rounded-md',  // ~6px
+      'xs':  'rounded-md',  // ~6px
+      'sm':  'rounded-md',  // ~6px
+      'md':  'rounded-lg',  // ~8px
+      'lg':  'rounded-lg',  // ~8px
+      'xl':  'rounded-xl',  // ~12px
+      '2xl': 'rounded-xl',  // ~12px
+      '3xl': 'rounded-xl', // ~12px
+    };
+    const radius = pill ? 'rounded-full' : sizeToRadius[size] || 'rounded-lg';
     const widthClass = block ? 'w-full' : '';
 
     // Neutral palette like Button for variants
     const variantStyles = (() => {
       switch (variant) {
         case 'solid':
-          return 'bg-[#181818] text-white';
+          return 'bg-[#181818]';
         case 'soft':
-          return 'bg-[#EBEBEB] text-[#181818]';
+          return 'bg-[#EBEBEB]';
         case 'outline':
-          return 'bg-transparent text-[#181818] border border-[#D8D8D8]';
+          return 'bg-transparent border border-[#D8D8D8]';
         case 'ghost':
-          return 'bg-transparent text-[#181818]';
+          return 'bg-transparent';
         default:
           return '';
       }
@@ -171,14 +197,38 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
           type="button"
           disabled={disabled}
           onClick={() => !disabled && setOpen((o) => !o)}
-          className={cn(baseField, padding, radius, variantStyles, hoverStyles, disabledStyles, className)}
+          className={cn(
+            baseField,
+            padding,
+            radius,
+            variantStyles,
+            hoverStyles,
+            disabledStyles,
+            className
+          )}
+          style={{ ...controlStyle, fontSize: spec.fontPx }}
         >
-          <span className="flex items-center gap-2">
-            <Icon name="calendar" size="md" className="text-current" />
-            <span className={cn(value ? '' : 'opacity-60')}>{showText}</span>
+          <span className="flex items-center gap-1">
+            <Icon
+              name="calendar"
+              className={cn(`text-[#8F8F8F]`)}
+              style={{ width: spec.icon.w, height: spec.icon.h, marginRight: spec.iconMarginRightPx }}
+            />
+            <span
+              className={cn('text-[#8F8F8F]')}
+              style={{ paddingLeft: textPaddingX, paddingRight: textPaddingX }}
+            >
+              {showText}
+            </span>
           </span>
-          <span className="flex items-center opacity-70">
-            <svg width="1em" height="1em" viewBox="0 0 10 16" fill="currentColor" aria-hidden="true">
+          <span className="flex items-center opacity-90" style={{ marginBottom: -0.5, marginLeft: spec.arrowMarginLeftPx }}>
+            <svg
+              width={spec.rightSvg.w}
+              height={spec.rightSvg.h}
+              viewBox="0 0 10 16"
+              fill="#858585"
+              aria-hidden="true"
+            >
               <path fillRule="evenodd" clipRule="evenodd" d="M4.34151 0.747423C4.71854 0.417526 5.28149 0.417526 5.65852 0.747423L9.65852 4.24742C10.0742 4.61111 10.1163 5.24287 9.75259 5.6585C9.38891 6.07414 8.75715 6.11626 8.34151 5.75258L5.00001 2.82877L1.65852 5.75258C1.24288 6.11626 0.61112 6.07414 0.247438 5.6585C-0.116244 5.24287 -0.0741267 4.61111 0.34151 4.24742L4.34151 0.747423ZM0.246065 10.3578C0.608879 9.94139 1.24055 9.89795 1.65695 10.2608L5.00001 13.1737L8.34308 10.2608C8.75948 9.89795 9.39115 9.94139 9.75396 10.3578C10.1168 10.7742 10.0733 11.4058 9.65695 11.7687L5.65695 15.2539C5.28043 15.582 4.7196 15.582 4.34308 15.2539L0.343082 11.7687C-0.0733128 11.4058 -0.116749 10.7742 0.246065 10.3578Z" />
             </svg>
           </span>
@@ -188,7 +238,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
         {open && (
           <div
             className={cn(
-              'absolute z-50 bg-white rounded-2xl shadow-lg border border-gray-200',
+              'absolute z-50 bg-white rounded-lg shadow-lg border border-gray-200',
               'p-3 w-80',
               popSide,
               popAlign
@@ -197,7 +247,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
             <div className="flex items-center justify-between mb-2 px-1">
               <button
                 type="button"
-                className="p-2 rounded-full hover:bg-gray-100"
+                className="p-2 rounded-md hover:bg-gray-100"
                 onClick={() => setViewMonth(addMonths(viewMonth, -1))}
               >
                 <Icon name="chevron-left" />
@@ -207,7 +257,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
               </div>
               <button
                 type="button"
-                className="p-2 rounded-full hover:bg-gray-100"
+                className="p-2 rounded-md hover:bg-gray-100"
                 onClick={() => setViewMonth(addMonths(viewMonth, 1))}
               >
                 <Icon name="chevron-right" />
@@ -251,7 +301,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
               {clearable && (
                 <button
                   type="button"
-                  className="px-3 py-1.5 rounded-full text-sm text-gray-700 hover:bg-gray-100"
+                  className="px-3 py-1.5 rounded-md text-sm text-gray-700 hover:bg-gray-100"
                   onClick={clearDate}
                 >
                   Clear
@@ -260,7 +310,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
               <div className="flex-1" />
               <button
                 type="button"
-                className="px-3 py-1.5 rounded-full text-sm text-gray-700 hover:bg-gray-100"
+                className="px-3 py-1.5 rounded-md text-sm text-gray-700 hover:bg-gray-100"
                 onClick={() => setOpen(false)}
               >
                 Close

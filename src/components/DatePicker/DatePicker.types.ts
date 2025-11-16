@@ -78,5 +78,12 @@ export interface DatePickerProps extends Omit<React.HTMLAttributes<HTMLDivElemen
    * @default false
    */
   disabled?: boolean;
+
+  /**
+   * Additional horizontal padding (in px) applied to the text label
+   * ("Pick a date" or selected date). Does not affect icon paddings.
+   * @default 0
+   */
+  textPaddingX?: number;
 }
 

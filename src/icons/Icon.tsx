@@ -26,11 +26,21 @@ export function Icon({ name, size = 'md', className, color, ...props }: IconComp
     return null;
   }
 
+  // If explicit width/height provided via style, do not apply default size classes
+  const hasExplicitSize =
+    (props as any)?.style?.width != null || (props as any)?.style?.height != null;
+  const sizeClass = hasExplicitSize ? '' : sizeMap[size];
+  const explicitWidth = (props as any)?.style?.width as number | string | undefined;
+  const explicitHeight = (props as any)?.style?.height as number | string | undefined;
+
   return (
     <IconComponent
-      size={size}
-      className={cn(sizeMap[size], className)}
+      // avoid passing size when explicit px is provided
+      {...(!hasExplicitSize ? { size } : {})}
+      className={cn(sizeClass, className)}
       color={color}
+      // enforce attributes for broader CSS environments
+      {...(hasExplicitSize ? { width: explicitWidth, height: explicitHeight } as any : {})}
       {...props}
     />
   );
