@@ -5,11 +5,11 @@ React UI component library for AI interfaces.
 ## Installation
 
 ```bash
-npm install @widgetui/react
+npm install @widget-ui/react
 # or
-yarn add @widgetui/react
+yarn add @widget-ui/react
 # or
-pnpm add @widgetui/react
+pnpm add @widget-ui/react
 ```
 
 ## Setup
