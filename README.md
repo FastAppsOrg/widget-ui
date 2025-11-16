@@ -1,15 +1,15 @@
 # WidgetUI
 
-A React UI component library built with TypeScript and Tailwind CSS.
+React UI component library for AI interfaces.
 
 ## Installation
 
 ```bash
-npm install widgetui
+npm install @widgetui/react
 # or
-yarn add widgetui
+yarn add @widgetui/react
 # or
-pnpm add widgetui
+pnpm add @widgetui/react
 ```
 
 ## Setup
