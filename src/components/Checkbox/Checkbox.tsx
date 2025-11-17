@@ -20,6 +20,23 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
 
     return (
       <div className="w-full">
+        <style>
+          {`
+            #${checkboxId}:checked + span svg {
+              opacity: 1;
+            }
+            #${checkboxId}:checked + span svg polyline {
+              stroke-dasharray: 30;
+              stroke-dashoffset: 0;
+              transition: stroke-dashoffset 0.3s ease-out;
+            }
+            #${checkboxId} + span svg polyline {
+              stroke-dasharray: 30;
+              stroke-dashoffset: 30;
+              transition: stroke-dashoffset 0.3s ease-out;
+            }
+          `}
+        </style>
         <div className="flex items-center">
           <input
             ref={ref}
@@ -50,24 +67,31 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
             }}
             className={cn(
               'relative inline-flex items-center justify-center',
-              'h-[18px] w-[18px] rounded-lg border border-[#CCCCCC] hover:border-[#AEAEAE] disabled:hover:border-[#CCCCCC]',
+              'h-[18px] w-[18px] rounded-md border border-[#CCCCCC] hover:border-[#AEAEAE] disabled:hover:border-[#CCCCCC]',
               'cursor-pointer transition-colors duration-100 ease-out',
               // checked fill transition
-              'bg-white peer-checked:bg-[#181818]',
+              'bg-white peer-checked:bg-[#181818] peer-checked:border-transparent',
               // disabled state
-              'peer-disabled:opacity-50 peer-disabled:cursor-not-allowed'
+              'peer-disabled:opacity-50 peer-disabled:cursor-not-allowed',
+              // Icon visibility
+              'peer-checked:[&>svg]:opacity-100'
             )}
           >
             <svg
-              width="12"
-              height="12"
-              viewBox="0 0 12 12"
-              fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className="opacity-0 peer-checked:opacity-100 transition-opacity duration-100 ease-out"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={4}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className={cn(
+                'text-white opacity-0 transition-opacity duration-100 ease-out'
+              )}
+              style={{ width: '12px', height: '12px' }}
               aria-hidden="true"
             >
-              <path d="M3 6.5L5 8.5L9 4.5" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <polyline points="4 12 9 17 20 6" />
             </svg>
           </span>
           {label && (
