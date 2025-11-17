@@ -1,3 +1,5 @@
+import type { Action } from '../../types';
+
 export interface RadioOption {
   value: string | number;
   label: string;
@@ -6,43 +8,47 @@ export interface RadioOption {
 
 export interface RadioGroupProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   /**
-   * Name attribute for all radio buttons in the group
+   * The name of the form control field. When the form is submitted, the value
+   * will be included in the onSubmitAction payload using this key. Dot paths are supported.
    */
   name: string;
 
   /**
-   * Selected value
-   */
-  value?: string | number;
-
-  /**
-   * Callback fired when the value changes
-   */
-  onChange?: (value: string | number) => void;
-
-  /**
-   * Options for the radio group
+   * Array of options to render as radio items.
    */
   options: RadioOption[];
 
   /**
-   * Label for the radio group
+   * Accessible label for the radio group; falls back to name.
    */
-  label?: string;
+  ariaLabel?: string;
 
   /**
-   * Whether the radio group is in an error state
+   * Action dispatched when the selected value changes.
    */
-  error?: boolean;
+  onChangeAction?: Action;
 
   /**
-   * Helper text to display below the radio group
+   * Initial selected value of the radio group.
    */
-  helperText?: string;
+  defaultValue?: string | number;
 
   /**
-   * Layout direction
+   * Layout direction of the radio items.
+   * @default "row"
    */
-  direction?: 'horizontal' | 'vertical';
+  direction?: 'row' | 'col';
+
+  /**
+   * Disable interactions and apply disabled styles for the entire group.
+   * @default false
+   */
+  disabled?: boolean;
+
+  /**
+   * Mark the group as required for form submission.
+   * @default false
+   */
+  required?: boolean;
 }
 
