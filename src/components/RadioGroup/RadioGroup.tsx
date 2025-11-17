@@ -69,7 +69,7 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
                       background-color: #FFFFFF;
                       opacity: 1;
                       transform: scale(1);
-                      transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+                      transition: opacity 0.15s ease-out, transform 0.1s ease-out;
                     }
                     span.radio-unchecked::after {
                       content: '';
@@ -80,7 +80,7 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
                       background-color: #FFFFFF;
                       opacity: 0;
                       transform: scale(0);
-                      transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+                      transition: opacity 0.15s ease-out, transform 0.1s ease-out;
                     }
                   `}
                 </style>
